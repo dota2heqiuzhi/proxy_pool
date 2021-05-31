@@ -18,12 +18,13 @@ import json
 class Proxy(object):
 
     def __init__(self, proxy, fail_count=0, region="", proxy_type="",
-                 source="", check_count=0, last_status="", last_time=""):
+                 source="", goal_web="", check_count=0, last_status="", last_time=""):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
         self._type = proxy_type
         self._source = source
+        self._goal_web = goal_web
         self._check_count = check_count
         self._last_status = last_status
         self._last_time = last_time
@@ -35,12 +36,15 @@ class Proxy(object):
         :param proxy_json:
         :return:
         """
-        proxy_dict = json.loads(proxy_json)
+        proxy_dict = proxy_json
+        if type(proxy_json) is not dict:
+            proxy_dict = json.loads(proxy_json)
         return cls(proxy=proxy_dict.get("proxy", ""),
                    fail_count=proxy_dict.get("fail_count", 0),
                    region=proxy_dict.get("region", ""),
                    proxy_type=proxy_dict.get("type", ""),
                    source=proxy_dict.get("source", ""),
+                   goal_web=proxy_dict.get("goal_web", ""),
                    check_count=proxy_dict.get("check_count", 0),
                    last_status=proxy_dict.get("last_status", ""),
                    last_time=proxy_dict.get("last_time", "")
@@ -72,6 +76,11 @@ class Proxy(object):
         return self._source
 
     @property
+    def goal_web(self):
+        """ 代理来源 """
+        return self._goal_web
+
+    @property
     def check_count(self):
         """ 代理检测次数 """
         return self._check_count
@@ -89,14 +98,17 @@ class Proxy(object):
     @property
     def to_dict(self):
         """ 属性字典 """
-        return {"proxy": self._proxy,
-                "fail_count": self._fail_count,
-                "region": self._region,
-                "type": self._type,
-                "source": self._source,
-                "check_count": self.check_count,
-                "last_status": self.last_status,
-                "last_time": self.last_time}
+        return {
+            "proxy": self._proxy,
+            # "fail_count": self._fail_count,
+            # "region": self._region,
+            # "type": self._type,
+            # "source": self._source,
+            "goal_web": self._goal_web,
+            # "check_count": self.check_count,
+            # "last_status": self.last_status,
+            # "last_time": self.last_time
+        }
 
     @property
     def to_json(self):
@@ -119,6 +131,10 @@ class Proxy(object):
     @source.setter
     def source(self, value):
         self._source = value
+
+    @goal_web.setter
+    def goal_web(self, value):
+        self._goal_web = value
 
     @check_count.setter
     def check_count(self, value):
