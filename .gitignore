@@ -3,3 +3,5 @@ docs/_build
 *.pyc
 *.log
 .vscode/settings.json
+log/supervisor_webapi.err
+*.err
