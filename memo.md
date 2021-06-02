@@ -2,7 +2,7 @@
 
 2、本机安装PostgreSQL，连接调试通过 ：https://www.postgresql.org/download/linux/redhat/
 
-—— 更改proxypool的数据库为MySQL
+—— 更改proxypool的数据库为PostgreSQL
 
 
 防火墙相关：
@@ -20,3 +20,5 @@ reread
 supervisorctl update
 
 supervisorctl stop all
+
+supervisorctl start all

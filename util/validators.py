@@ -7,6 +7,7 @@ from handler.configHandler import ConfigHandler
 conf = ConfigHandler()
 validators = []
 
+CHECK_URL = "https://api.opendota.com/api/players/148351321/wl"
 
 def validator(func):
     validators.append(func)
@@ -39,8 +40,8 @@ def timeOutValidator(proxy):
                'Connection': 'keep-alive',
                'Accept-Language': 'zh-CN,zh;q=0.8'}
     try:
-        r = requests.head(conf.verifyUrl, headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
-        if r.status_code == 200:
+        r = requests.head(CHECK_URL, headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        if r.status_code == 200 and 'win' in r.text:
             return True
     except Exception as e:
         pass
