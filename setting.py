@@ -37,7 +37,7 @@ PORT = 5010
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
 # DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
-DB_CONN = 'PostgreSQL://root:1016heqiuzhI@127.0.0.1:5432/proxypool'
+DB_CONN = 'PostgreSQL://dota2:1016heqiuzhI@127.0.0.1:5432/proxypool'
 
 # proxy table name
 TABLE_NAME = 'proxy'
@@ -62,7 +62,7 @@ PROXY_FETCHER = [
 VERIFY_URL = "https://www.qq.com"
 
 # 代理验证时超时时间
-VERIFY_TIMEOUT = 10
+VERIFY_TIMEOUT = 3
 
 # 代理校验规则基于的最近校验次数
 PROXY_CHECK_COUNT = 10
@@ -71,7 +71,7 @@ PROXY_CHECK_COUNT = 10
 MAX_FAIL_COUNT = 0
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败率,超过则剔除代理
-MAX_FAIL_RATE = 0.1
+MAX_FAIL_RATE = 0.01
 
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
 POOL_SIZE_MIN = 20

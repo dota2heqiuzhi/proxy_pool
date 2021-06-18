@@ -2,9 +2,9 @@ if __name__ == '__main__':
     from db.dbClient import DbClient
     from helper.proxy import Proxy
 
-    uri = 'PostgreSQL://root:1016heqiuzhI@127.0.0.1:5432/proxypool'
+    uri = 'PostgreSQL://dota2:1016heqiuzhI@127.0.0.1:5432/proxypool'
     db = DbClient(uri)
-    proxy = Proxy('127.0.0.1:1010', goal_web = 'haha')
+    # proxy = Proxy('127.0.0.1:1010', goal_web = 'haha')
     db.clear()
 
     # print("put: ", db.put(proxy))

@@ -30,13 +30,13 @@ def proxyCheck(proxy_obj):
     :return: Proxy object, status
     """
 
-    def __proxyCheck(proxy):
+    def __proxyCheck(proxy_obj):
         for func in validators:
-            if not func(proxy):
+            if not func(proxy_obj):
                 return False
         return True
 
-    if __proxyCheck(proxy_obj.proxy):
+    if __proxyCheck(proxy_obj):
         # 检测通过 更新proxy属性
         proxy_obj.check_count += 1
         proxy_obj.last_status = 1
@@ -73,33 +73,37 @@ class Checker(Thread):
             except Empty:
                 self.log.info("ProxyCheck - {}  : complete".format(self.name))
                 break
+ 
 
-            proxy = Proxy.createFromJson(proxy_json)
-            proxy = proxyCheck(proxy)
-            if self.type == "raw":
-                if proxy.last_status:
-                    if self.proxy_handler.exists(proxy):
-                        self.log.info('ProxyCheck - {}  : {} exists'.format(self.name, proxy.proxy.ljust(23)))
+            for w_goal_web in ["opendota", "steam"]:
+                proxy = Proxy.createFromJson(proxy_json)
+                proxy.goal_web = w_goal_web
+                proxy = proxyCheck(proxy)
+                
+                if self.type == "raw":
+                    if proxy.last_status:
+                        if self.proxy_handler.exists(proxy):
+                            self.log.info('ProxyCheck - {}  : {} {} exists'.format(self.name, proxy.proxy.ljust(23), proxy.goal_web))
+                        else:
+                            self.log.info('ProxyCheck - {}  : {} {} success'.format(self.name, proxy.proxy.ljust(23), proxy.goal_web))
+                            self.proxy_handler.put(proxy)
                     else:
-                        self.log.info('ProxyCheck - {}  : {} success'.format(self.name, proxy.proxy.ljust(23)))
+                        self.log.info('ProxyCheck - {}  : {} {} fail'.format(self.name, proxy.proxy.ljust(23), proxy.goal_web))
+                else:
+                    if proxy.last_status:
+                        self.log.info('ProxyCheck - {}  : {} {} pass'.format(self.name, proxy.proxy.ljust(23), proxy.goal_web))
                         self.proxy_handler.put(proxy)
-                else:
-                    self.log.info('ProxyCheck - {}  : {} fail'.format(self.name, proxy.proxy.ljust(23)))
-            else:
-                if proxy.last_status:
-                    self.log.info('ProxyCheck - {}  : {} pass'.format(self.name, proxy.proxy.ljust(23)))
-                    self.proxy_handler.put(proxy)
-                else:
-                    if proxy.fail_count > self.conf.maxFailCount:
-                        self.log.info('ProxyCheck - {}  : {} fail, count {} delete'.format(self.name,
-                                                                                           proxy.proxy.ljust(23),
-                                                                                           proxy.fail_count))
-                        self.proxy_handler.delete(proxy)
                     else:
-                        self.log.info('ProxyCheck - {}  : {} fail, count {} keep'.format(self.name,
-                                                                                         proxy.proxy.ljust(23),
-                                                                                         proxy.fail_count))
-                        self.proxy_handler.put(proxy)
+                        if proxy.fail_count > self.conf.maxFailCount:
+                            self.log.info('ProxyCheck - {}  : {} fail, count {} delete'.format(self.name,
+                                                                                            proxy.proxy.ljust(23),
+                                                                                            proxy.fail_count))
+                            self.proxy_handler.delete(proxy)
+                        else:
+                            self.log.info('ProxyCheck - {}  : {} fail, count {} keep'.format(self.name,
+                                                                                            proxy.proxy.ljust(23),
+                                                                                            proxy.fail_count))
+                            self.proxy_handler.put(proxy)
             self.queue.task_done()
 
 
@@ -119,3 +123,4 @@ def runChecker(tp, queue):
 
     for thread in thread_list:
         thread.join()
+
